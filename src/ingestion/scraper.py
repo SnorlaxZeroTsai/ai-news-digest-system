@@ -1,9 +1,9 @@
-# --- src/ingestion/scraper.py ---
-
 import feedparser
 import requests
 import time
 from datetime import datetime
+import json
+import os
 
 # Define the RSS feeds to fetch.
 # Using a dictionary allows for easy extension in the future.
@@ -58,21 +58,40 @@ def fetch_rss_feeds():
 
     return all_articles
 
+def save_articles_to_json(articles):
+    """
+    Saves a list of articles to a JSON file in the data/raw/ directory.
+    The filename includes the current date.
+    """
+    # Define the output directory based on our project structure.
+    output_dir = 'data/raw'
+    # Ensure the output directory exists.
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Generate a filename with today's date.
+    today_str = datetime.now().strftime('%Y-%m-%d')
+    file_path = os.path.join(output_dir, f'{today_str}_rss_articles.json')
+
+    print(f"Saving articles to {file_path}...")
+
+    # Write the articles list to the JSON file.
+    try:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            # json.dump writes the Python object to a file.
+            # ensure_ascii=False is important for correctly handling non-English characters.
+            # indent=4 makes the JSON file human-readable.
+            json.dump(articles, f, ensure_ascii=False, indent=4)
+        print(f"Successfully saved {len(articles)} articles.")
+    except Exception as e:
+        print(f"ERROR: Could not save articles to JSON file. Error: {e}")
+
+
 if __name__ == '__main__':
     # This block of code will only run when scraper.py is executed directly.
     # It's useful for independent testing of this module.
-    articles = fetch_rss_feeds()
+    fetched_articles = fetch_rss_feeds()
     
-    if articles:
-        print(f"\nTotal articles fetched: {len(articles)}")
-        print("--- Displaying first 5 articles as an example ---")
-        for article in articles[:5]:
-            print("---")
-            print(f"  Source: {article['source']}")
-            print(f"  Title: {article['title']}")
-            print(f"  Link: {article['link']}")
-            print(f"  Published Date: {article['published_date']}")
-            # The summary can be very long, so let's show the first 100 characters.
-            # print(f"  Summary: {article['summary'][:100]}...") 
+    if fetched_articles:
+        save_articles_to_json(fetched_articles)
     else:
-        print("No articles were fetched.")
+        print("No articles were fetched, skipping save.")
