@@ -1,5 +1,3 @@
-# --- src/ingestion/scraper.py ---
-
 import feedparser
 import requests # Ensure requests is imported
 import time
