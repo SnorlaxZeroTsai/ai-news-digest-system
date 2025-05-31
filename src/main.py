@@ -7,7 +7,7 @@ from ingestion.scraper import fetch_rss_feeds, fetch_stanford_hai_news_requests,
 from processing.deduplicator import run_deduplication
 from processing.classifier import run_classification, CANDIDATE_LABELS_EN
 from processing.summarizer import run_summarization
-
+from output.markdown_generator import generate_newsletter_markdown, save_markdown_newsletter
 # Define output directory for final processed data
 PROCESSED_DATA_DIR = 'data/processed'
 
@@ -34,6 +34,7 @@ def run_daily_pipeline():
     5. Save final processed data
     """
     print("--- Starting Daily AI News Pipeline ---")
+    today_date_obj = datetime.now()
     today_string = datetime.now().strftime('%Y-%m-%d')
 
     # --- 1. Ingestion ---
@@ -90,10 +91,24 @@ def run_daily_pipeline():
         return
     print(f"Pipeline: Summarization complete for {len(summarized_articles)} articles (or up to limit).")
 
-    # --- 5. Save Final Processed Data ---
-    save_final_processed_data(summarized_articles, today_string)
+    # --- 5. Save Final Processed Data (JSON) ---
+    save_final_processed_data(summarized_articles, today_string) # summarized_articles is the fully processed list
+
+    # *** 新增步驟：6. Generate and Save Markdown Newsletter ***
+    print("\n--- Step 6: Generating Markdown Newsletter ---")
+    if summarized_articles: # Use the fully processed list
+        markdown_content = generate_newsletter_markdown(summarized_articles, today_date_obj)
+        if markdown_content:
+            save_markdown_newsletter(markdown_content, today_date_obj)
+            print("Pipeline: Markdown newsletter generated successfully.")
+        else:
+            print("Pipeline ERROR: Failed to generate Markdown content.")
+    else:
+        print("Pipeline: No summarized articles to generate newsletter from.")
+
 
     print("\n--- Daily AI News Pipeline Finished ---")
+
 
 if __name__ == '__main__':
     run_daily_pipeline()
