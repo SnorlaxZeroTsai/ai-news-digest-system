@@ -1,17 +1,17 @@
 import json
 import os
 from datetime import datetime
-from openai import OpenAI # Ensure OpenAI SDK is imported
+from openai import OpenAI
 import time
 
-# Define the path to the data (now expecting files with full text)
-DATA_DIR = 'data/raw' 
+# Define the path to the data
+RAW_DATA_DIR = 'data/raw' 
+PROCESSED_DATA_DIR = 'data/processed' # New directory for processed data
 
 # --- API Key Handling for OpenAI ---
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 if not OPENAI_API_KEY:
     print("ERROR: OPENAI_API_KEY environment variable not set.")
-    # Consider raising an exception or exiting
 
 # --- LLM Configuration for OpenAI ---
 DEFAULT_OPENAI_MODEL_NAME = "gpt-3.5-turbo" 
@@ -20,16 +20,13 @@ TEMPERATURE = 0.2
 
 def load_articles_for_summarization(date_str):
     """
-    Loads articles from the JSON file that now includes full_text.
+    Loads articles from the JSON file that includes full_text.
     """
-    # *** MODIFICATION: Update filename to look for fulltext articles ***
-    file_path = os.path.join(DATA_DIR, f'{date_str}_combined_sources_fulltext_articles.json')
-    
+    file_path = os.path.join(RAW_DATA_DIR, f'{date_str}_combined_sources_fulltext_articles.json')
     if not os.path.exists(file_path):
         print(f"ERROR: File not found at {file_path}")
         print(f"Please ensure 'src/ingestion/scraper.py' has been run to generate this file with full text.")
         return []
-
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             articles = json.load(f)
@@ -42,7 +39,7 @@ def load_articles_for_summarization(date_str):
 def construct_popular_science_prompt_for_openai(article_title, article_content):
     """
     Constructs system and user prompts for OpenAI API for popular science summary.
-    (This function remains the same as before, as it already takes article_content)
+    (This function remains the same)
     """
     system_message_content = (
         "You are an expert AI science communicator. Your task is to summarize the provided AI-related news article "
@@ -78,20 +75,18 @@ Output ONLY the popular science summary. Do not include any preambles or convers
 """
     return system_message_content, user_message_content
 
-
 def generate_summary_with_openai(article_title, article_content, 
                                  client, model_name=DEFAULT_OPENAI_MODEL_NAME, 
                                  max_tokens=MAX_TOKENS_TO_SAMPLE, temp=TEMPERATURE):
     """
     Generates a summary using the OpenAI Chat Completions API.
-    (This function remains largely the same, it just receives different article_content now)
+    (This function remains largely the same)
     """
     if not client:
         print("ERROR: OpenAI client not initialized (API key might be missing).")
         return "Error: API client not initialized."
 
     system_prompt, user_prompt = construct_popular_science_prompt_for_openai(article_title, article_content)
-
     try:
         print(f"\nRequesting summary for: '{article_title[:80]}...' from OpenAI model {model_name} using its full text (or best available).")
         response = client.chat.completions.create(
@@ -111,9 +106,9 @@ def generate_summary_with_openai(article_title, article_content,
             return summary_text.strip()
         else:
             print("ERROR: No choices found in the OpenAI API response or unexpected response structure.")
-            print(f"Full API Response: {response}")
+            # print(f"Full API Response: {response}") # Uncomment for debugging
             return "Error: Could not extract summary from OpenAI API response."
-    except openai.APIConnectionError as e: # Make sure to import 'openai' if not already done at top level
+    except openai.APIConnectionError as e:
         print(f"ERROR: OpenAI API connection error: {e}")
         return f"Error: API Connection Error - {e.__cause__}"
     except openai.RateLimitError as e:
@@ -128,47 +123,96 @@ def generate_summary_with_openai(article_title, article_content,
         print(traceback.format_exc())
         return "Error: Unexpected error during OpenAI summarization."
 
+# --- New function to save processed articles ---
+def save_processed_articles(articles, date_str):
+    """
+    Saves the list of articles (now including summaries) to a new JSON file
+    in the data/processed/ directory.
+    """
+    os.makedirs(PROCESSED_DATA_DIR, exist_ok=True) # Ensure the directory exists
+    file_path = os.path.join(PROCESSED_DATA_DIR, f'{date_str}_processed_articles.json')
+    
+    print(f"\nSaving processed articles to {file_path}...")
+    try:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(articles, f, ensure_ascii=False, indent=4)
+        print(f"Successfully saved {len(articles)} processed articles to {file_path}.")
+    except Exception as e:
+        print(f"ERROR: Could not save processed articles to JSON file. Error: {e}")
+
 
 if __name__ == '__main__':
     today_string = datetime.now().strftime('%Y-%m-%d')
-    # e.g., today_string = '2025-05-31' # Ensure this file exists with full text
+    # e.g., today_string = '2025-05-31' 
     
-    articles_data = load_articles_for_summarization(today_string)
-    
-    if articles_data and OPENAI_API_KEY:
+    articles_to_process = load_articles_for_summarization(today_string)
+    processed_articles_list = [] # To store articles that have been summarized
+
+    if articles_to_process and OPENAI_API_KEY:
         openai_client = OpenAI(api_key=OPENAI_API_KEY)
         
-        print(f"\n--- OpenAI Summarization with Full Text (Processing first {min(2, len(articles_data))} articles) ---")
-        for i, article in enumerate(articles_data[:2]): 
+        print(f"\n--- OpenAI Summarization with Full Text (Processing first {min(2, len(articles_to_process))} articles) ---")
+        
+        # Create a copy to modify, or modify in place if that's intended
+        articles_with_summaries = list(articles_to_process) # Create a shallow copy
+
+        for i, article in enumerate(articles_with_summaries[:2]): # Process first 2 for testing
             title = article.get('title', 'N/A')
-            
-            # *** MODIFICATION: Use 'full_text' as primary content for summarization ***
             content_to_summarize = article.get('full_text', '') 
             
-            # Fallback logic if full_text is missing or very short
-            if not content_to_summarize or len(content_to_summarize.strip()) < 50: # Arbitrary length check
-                print(f"    WARNING: 'full_text' for '{title}' is missing or too short. Falling back to summary_from_feed/list or title.")
+            if not content_to_summarize or len(content_to_summarize.strip()) < 50:
+                print(f"    WARNING: 'full_text' for '{title}' is missing or too short. Falling back.")
                 content_to_summarize = article.get('summary_from_feed', article.get('summary_from_list', ''))
                 if not content_to_summarize and title != 'N/A':
                     content_to_summarize = title
                 elif title != 'N/A' and content_to_summarize:
                      content_to_summarize = title + ". " + content_to_summarize
 
-
             if not content_to_summarize or not content_to_summarize.strip() or content_to_summarize.strip() == ".":
-                print(f"\nSkipping article '{title}' due to insufficient content for summarization after fallbacks.")
+                print(f"\nSkipping article '{title}' due to insufficient content for summarization.")
+                article['popular_summary'] = "Content insufficient for summarization." # Add placeholder
+                processed_articles_list.append(article) # Still add to list for saving
                 continue
                 
-            print(f"\nInput Content for '{title}' (first 500 chars):\n{content_to_summarize[:500]}...")
+            print(f"\nInput Content for '{title}' (first 500 chars of content to summarize):\n{content_to_summarize[:500]}...")
             
             generated_summary = generate_summary_with_openai(title, content_to_summarize, openai_client)
             
-            print(f"\n--- Generated Popular Science Summary for '{title}' (Using OpenAI with full text) ---")
+            print(f"\n--- Generated Popular Science Summary for '{title}' (Using OpenAI) ---")
             print(generated_summary)
             print("--- End of Summary ---")
             
-            if i < len(articles_data[:2]) - 1: 
+            article['popular_summary'] = generated_summary
+            processed_articles_list.append(article) # Add processed article to new list
+
+            if i < len(articles_with_summaries[:2]) - 1: 
                 time.sleep(1) 
+
+        # Add remaining unprocessed articles to the list if you want to save all of them
+        # Or only save the ones that were processed (i.e., attempted for summarization)
+        # For now, `processed_articles_list` only contains the articles we attempted to summarize.
+        # If you want to save ALL original articles, with summaries added to those processed,
+        # you'd iterate through `articles_to_process` and update them, then save `articles_to_process`.
+        # Let's modify to save all original articles, adding summaries where generated:
+        
+        # Reset and repopulate processed_articles_list with all articles, adding summaries
+        all_articles_for_saving = []
+        for original_article in articles_to_process:
+            # Find if this article was processed and has a summary
+            summary_added = False
+            for processed_article_with_summary in processed_articles_list:
+                if original_article['link'] == processed_article_with_summary['link']:
+                    all_articles_for_saving.append(processed_article_with_summary)
+                    summary_added = True
+                    break
+            if not summary_added:
+                # If not processed (e.g. was beyond the [:2] limit), add original with placeholder
+                original_article['popular_summary'] = "Not processed for summary in this run."
+                all_articles_for_saving.append(original_article)
+        
+        # *** MODIFICATION: Call the new save function ***
+        if all_articles_for_saving:
+            save_processed_articles(all_articles_for_saving, today_string)
                 
     elif not OPENAI_API_KEY:
         print("\nSkipping OpenAI summarization test because OPENAI_API_KEY is not set.")
