@@ -175,3 +175,9 @@ cython_debug/
 
 # Data files
 data/
+
+# Hugo
+newsletter_site/public/
+newsletter_site/resources/
+newsletter_site/.hugo_build.lock
+*.DS_Store
