@@ -1,0 +1,31 @@
+baseURL = "https://your-username.github.io/ai-news-summarizer/" # 請替換為您網站的最終網址
+languageCode = "zh-TW" # 根據您的目標語言設定
+title = "AI科普速遞" # 您網站的標題
+# theme = "" # 如果您不使用主題，可以註解掉或刪除此行，或者未來指定主題名稱
+
+# 內容目錄，Hugo 預設為 "content"，通常不需要特別改
+# contentDir = "content" 
+
+[params]
+  description = "每日AI科普新聞摘要，由AI為您呈現。"
+
+# 如果您希望URL更簡潔
+# [permalinks]
+#   newsletter = "/newsletter/:year-:month-:day/" # 假設內容類型是 'newsletter'
+
+[menu]
+  [[menu.main]]
+    identifier = "home"
+    name = "首頁"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    identifier = "archive"
+    name = "歷史報表"
+    url = "/newsletter/" # 所有電子報都在 newsletter section 下
+    weight = 2
+
+# 讓 Hugo 將 Markdown 中的 HTML 視為安全並直接渲染
+# 如果您的 Markdown 摘要中包含少量安全的 HTML 標籤 (例如 <a> 以外的標籤)，可能需要開啟
+[markup.goldmark.renderer]
+  unsafe = true

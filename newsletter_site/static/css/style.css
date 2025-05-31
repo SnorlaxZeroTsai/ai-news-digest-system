@@ -1,0 +1,12 @@
+/* newsletter_site/static/css/style.css */
+body { font-family: sans-serif; line-height: 1.6; margin: 0; padding: 0; color: #333; }
+.site-header, .site-footer { background-color: #f4f4f4; padding: 1em; text-align: center; }
+.site-header nav ul { list-style-type: none; padding: 0; }
+.site-header nav ul li { display: inline; margin-right: 20px; }
+main { max-width: 800px; margin: 20px auto; padding: 20px; }
+h1, h2, h3 { color: #333; }
+.newsletter-issue .date { color: #777; font-style: italic; }
+.newsletter-issue .content h3 { margin-top: 2em; } /* 針對 Markdown 內的 H3 */
+.newsletter-issue .content a { color: #007bff; }
+.newsletter-archive ul { list-style-type: none; padding: 0; }
+.newsletter-archive li { margin-bottom: 10px; }

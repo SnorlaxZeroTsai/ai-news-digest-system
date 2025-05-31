@@ -1,0 +1,11 @@
+{{ define "main" }}
+<div class="newsletter-archive">
+    <h1>{{ .Title }} (歷史報表)</h1>
+    <ul>
+        {{ range .Pages.ByDate.Reverse }} <li>
+            <a href="{{ .RelPermalink }}">{{ .Title }} ({{ .Date.Format "2006-01-02" }})</a>
+        </li>
+        {{ end }}
+    </ul>
+</div>
+{{ end }}

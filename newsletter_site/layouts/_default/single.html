@@ -1,0 +1,10 @@
+{{ define "main" }}
+<article class="newsletter-issue">
+    <header>
+        <h1>{{ .Title }}</h1>
+        <p class="date">發布於：{{ .Date.Format "2006年1月2日" }}</p>
+    </header>
+    <section class="content">
+        {{ .Content }} </section>
+</article>
+{{ end }}

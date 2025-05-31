@@ -1,0 +1,39 @@
+{{/* newsletter_site/layouts/index.html - 修改後 */}}
+{{ define "main" }}
+<div class="home-page" style="text-align: center; padding: 20px;">
+    <h1>歡迎來到 {{ .Site.Title }}!</h1>
+    
+    {{ with .Site.Params.description }}
+        <p style="font-size: 1.2em; color: #555;">{{ . }}</p>
+    {{ end }}
+
+    <p style="margin-top: 30px;">這裡是您每日的 AI 科普新聞摘要來源，由 AI 為您精心準備和呈現。</p>
+
+    {{ $pages := where .Site.RegularPages.ByDate.Reverse "Section" "newsletter" }}
+    {{ $latestNewsletterPage := first 1 $pages }} {{/* 將變數改名以示區分 */}}
+
+    {{ if $latestNewsletterPage }}
+        {{ range $latestNewsletterPage }} {{/* 這裡的 . 是頁面物件 */}}
+            <div style="margin-top: 40px; margin-bottom: 40px; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #f9f9f9;">
+                <h2><a href="{{ .RelPermalink }}" style="text-decoration: none; color: #007bff;">最新一期：{{ .Title }} ({{ .Date.Format "2006年1月2日" }})</a></h2>
+                
+                {{/* 獲取摘要，並在外部保存頁面物件的上下文 */}}
+                {{ $currentPage := . }} {{/* 保存當前頁面物件到 $currentPage */}}
+                {{ with .Params.summary | default .Summary }}
+                    <p>{{ . | plainify | truncate 150 "..." }}</p> 
+                                {{/* 此處的 . 是摘要字串 */}}
+                {{ end }}
+                <p><a href="{{ $currentPage.RelPermalink }}">繼續閱讀 &rarr;</a></p> {{/* 使用 $currentPage.RelPermalink */}}
+            </div>
+        {{ end }}
+    {{ else }}
+        <p style="margin-top: 40px;">目前尚無電子報發布，敬請期待！</p>
+    {{ end }}
+
+    <p style="margin-top: 30px; font-size: 1.1em;">
+        <a href="{{ "/newsletter/" | relURL }}" style="padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+            查看所有歷史報表 &rarr;
+        </a>
+    </p>
+</div>
+{{ end }}

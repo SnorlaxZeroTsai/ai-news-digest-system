@@ -4,7 +4,7 @@ from datetime import datetime
 from collections import defaultdict
 
 PROCESSED_DATA_DIR = 'data/processed'
-MARKDOWN_OUTPUT_DIR = 'data/output/markdown' # Or 'content/newsletter/' if using Hugo/Pelican directly
+MARKDOWN_OUTPUT_DIR = 'newsletter_site/content/newsletter'
 
 # Mapping English category labels (from classifier) to Chinese titles for the newsletter
 # This can be expanded or moved to a config file.
@@ -113,7 +113,7 @@ def save_markdown_newsletter(markdown_str, date_obj):
     """Saves the generated Markdown string to a file."""
     os.makedirs(MARKDOWN_OUTPUT_DIR, exist_ok=True)
     date_file_str = date_obj.strftime('%Y-%m-%d')
-    file_path = os.path.join(MARKDOWN_OUTPUT_DIR, f'{date_file_str}_newsletter.md')
+    file_path = os.path.join(MARKDOWN_OUTPUT_DIR, f'{date_file_str}.md') 
 
     try:
         with open(file_path, 'w', encoding='utf-8') as f:
