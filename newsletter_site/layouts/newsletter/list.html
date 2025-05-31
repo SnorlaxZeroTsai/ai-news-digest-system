@@ -1,9 +1,17 @@
 {{ define "main" }}
 <div class="newsletter-archive">
-    <h1>{{ .Title }} (歷史報表)</h1>
-    <ul>
-        {{ range .Pages.ByDate.Reverse }} <li>
-            <a href="{{ .RelPermalink }}">{{ .Title }} ({{ .Date.Format "2006-01-02" }})</a>
+    <h1>{{ .Title | default "歷史報表" }}</h1>
+    <ul class="newsletter-list">
+        {{ range .Pages.ByDate.Reverse }} 
+        <li>
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+            <span class="date">({{ .Date.Format "2006-01-02" }})</span>
+            {{ $currentPage := . }}
+            {{ with .Params.summary | default .Summary }}
+                <p class="archive-summary">{{ . | plainify | truncate 120 "..." }} 
+                    <a href="{{ $currentPage.RelPermalink }}" class="read-more-inline">閱讀 &rarr;</a>
+                </p>
+            {{ end }}
         </li>
         {{ end }}
     </ul>
