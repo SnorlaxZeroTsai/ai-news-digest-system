@@ -39,9 +39,22 @@ This project is an AI-driven news summarization system with a core focus on scie
 
 The following diagram illustrates the overall workflow of the AI Popular Science Express system, from data ingestion to newsletter generation:
 
-![AI Popular Science Express Workflow](https://www.mermaidchart.com/raw/861bd2f3-451d-4cfa-89c3-cc67939e987d?theme=light&version=v0.1&format=svg)
+```mermaid
+graph TD
+    A["Data Sources: RSS/Websites"] --> B("Content Ingestion: src/main.py + scraper.py");
+    B --> C["Raw JSON: data/raw/YYYY-MM-DD_raw.json"];
+    C --> D("Processing Pipeline: src/main.py");
+    D -- "Step 1: Deduplication" --> E["Unique Articles List"];
+    E -- "Step 2: Classification" --> F["Classified Articles List"];
+    F -- "Step 3: Summarization (OpenAI API)" --> G["Summarized Articles List"];
+    G --> H_json_initial["Initial Processed JSON (No Image URL): data/processed/YYYY-MM-DD_final.json"];
 
-*(Diagram hosted on Mermaid Chart)*
+    classDef pythonNode fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef dataNode type:database,fill:#fff,stroke:#333,stroke-width:2px;
+    class A,B,D,E,F,G pythonNode;
+    class C,H_json_initial dataNode;
+
+```
 
 ## Setup and Installation
 
