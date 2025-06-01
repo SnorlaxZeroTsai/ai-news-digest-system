@@ -8,6 +8,14 @@ from processing.deduplicator import run_deduplication
 from processing.classifier import run_classification, CANDIDATE_LABELS_EN
 from processing.summarizer import run_summarization
 from output.markdown_generator import generate_newsletter_markdown, save_markdown_newsletter
+
+from output.markdown_generator import (
+    generate_newsletter_markdown, 
+    save_markdown_newsletter,
+    create_slug_from_title, # For generating image slugs
+    MANUAL_IMAGE_BASE_PATH_FOR_MARKDOWN, # Base path for markdown image links
+    MANUAL_IMAGE_ACTUAL_BASE_DIR # For constructing full check path (not strictly needed in main.py if only storing md path)
+)
 # Define output directory for final processed data
 PROCESSED_DATA_DIR = 'data/processed'
 
@@ -91,8 +99,27 @@ def run_daily_pipeline():
         return
     print(f"Pipeline: Summarization complete for {len(summarized_articles)} articles (or up to limit).")
 
+    print("\n--- Step 4.5: Generating Expected Image Paths ---")
+    articles_with_image_paths = []
+    for article in summarized_articles:
+        title = article.get('title', 'untitled_article')
+        slug_base = create_slug_from_title(title)
+        
+        image_date_folder_name = today_date_obj.strftime('%Y-%m-%d')
+        
+        # 預期圖片檔名 (假設 .png，您可以讓用戶手動保存為不同格式，並在 markdown_generator 中檢查多種後綴)
+        expected_filename = f"{image_date_folder_name}_{slug_base}.png" 
+        
+        # 預期在 Markdown 中使用的圖片路徑
+        expected_markdown_path = f"{MANUAL_IMAGE_BASE_PATH_FOR_MARKDOWN}/{image_date_folder_name}/{expected_filename}"
+        
+        article['image_expected_filename'] = expected_filename
+        article['image_expected_markdown_path'] = expected_markdown_path
+        articles_with_image_paths.append(article)
+        print(f"  Article: '{title[:50]}...' -> Expected image filename: {expected_filename}")
+
     # --- 5. Save Final Processed Data (JSON) ---
-    save_final_processed_data(summarized_articles, today_string) # summarized_articles is the fully processed list
+    save_final_processed_data(articles_with_image_paths, today_string) # summarized_articles is the fully processed list
 
     # *** 新增步驟：6. Generate and Save Markdown Newsletter ***
     print("\n--- Step 6: Generating Markdown Newsletter ---")

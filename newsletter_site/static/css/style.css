@@ -240,3 +240,12 @@ main {
     .site-header nav ul li { display: block; margin: 10px 0; }
     .home-page .view-archive-link a { width: 100%; text-align: center; }
 }
+
+.newsletter-issue .content img {
+    max-width: 100%; /* 確保圖片響應式 */
+    height: auto;    /* 保持圖片原始寬高比 */
+    display: block;  /* 讓圖片獨佔一行，方便設定 margin */
+    margin: 1.5em auto; /* 上下留白，並水平居中 */
+    border-radius: 8px; /* 輕微的圓角 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 微妙的陰影 */
+}

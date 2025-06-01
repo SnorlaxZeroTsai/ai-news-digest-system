@@ -1,7 +1,7 @@
-baseURL = "https://your-username.github.io/ai-news-summarizer/" # 請替換為您網站的最終網址
-languageCode = "zh-TW" # 根據您的目標語言設定
-title = "AI科普速遞" # 您網站的標題
-# theme = "" # 如果您不使用主題，可以註解掉或刪除此行，或者未來指定主題名稱
+baseURL = "http://localhost:1313/ai-news-summarizer/" 
+languageCode = "zh-TW"
+title = "AI科普速遞" 
+# theme = "" 
 
 # 內容目錄，Hugo 預設為 "content"，通常不需要特別改
 # contentDir = "content" 
@@ -9,9 +9,8 @@ title = "AI科普速遞" # 您網站的標題
 [params]
   description = "每日AI科普新聞摘要，由AI為您呈現。"
 
-# 如果您希望URL更簡潔
 # [permalinks]
-#   newsletter = "/newsletter/:year-:month-:day/" # 假設內容類型是 'newsletter'
+#   newsletter = "/newsletter/:year-:month-:day/"
 
 [menu]
   [[menu.main]]
