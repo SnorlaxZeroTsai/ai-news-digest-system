@@ -61,10 +61,10 @@ graph TD
     
     subgraph "Manual Image Workflow (User Action)"
         direction LR
-        I_subgraph[Input: Initial Processed JSON] -- "Read Summary" --> J("1. Generate Image (Fooocus, etc.)")
-        J -- "Image based on popular_summary" --> K("2. Upload Image to GitHub/Cloud OR Place Locally")
-        K --> L_url["3. Get Public Image URL (if cloud) / Confirm Local Path"]
-        L_url -- "URL/Path obtained" --> M_update("4. Manually Update JSON File with image_url / Ensure Local File Matches Expected Path")
+        I_subgraph[Input: Initial Processed JSON] -- "Read Summary" --> J("1: Generate Image (Fooocus, etc.)")
+        J -- "Image based on popular_summary" --> K("2: Upload Image to GitHub/Cloud OR Place Locally")
+        K --> L_url["3: Get Public Image URL (if cloud) / Confirm Local Path"]
+        L_url -- "URL/Path obtained" --> M_update("4: Manually Update JSON File with image_url / Ensure Local File Matches Expected Path")
     end
 
     M_update --> N_json_updated["Updated Processed JSON (with Image URL/Path Info): data/processed/YYYY-MM-DD_final.json"]
