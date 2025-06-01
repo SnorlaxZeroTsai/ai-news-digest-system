@@ -1,12 +1,242 @@
-/* newsletter_site/static/css/style.css */
-body { font-family: sans-serif; line-height: 1.6; margin: 0; padding: 0; color: #333; }
-.site-header, .site-footer { background-color: #f4f4f4; padding: 1em; text-align: center; }
-.site-header nav ul { list-style-type: none; padding: 0; }
-.site-header nav ul li { display: inline; margin-right: 20px; }
-main { max-width: 800px; margin: 20px auto; padding: 20px; }
-h1, h2, h3 { color: #333; }
-.newsletter-issue .date { color: #777; font-style: italic; }
-.newsletter-issue .content h3 { margin-top: 2em; } /* 針對 Markdown 內的 H3 */
-.newsletter-issue .content a { color: #007bff; }
-.newsletter-archive ul { list-style-type: none; padding: 0; }
-.newsletter-archive li { margin-bottom: 10px; }
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans TC', 'Montserrat', sans-serif; /* Noto Sans TC 優先用於中文, Montserrat 用於英文或備用 */
+    line-height: 1.7;
+    margin: 0;
+    padding: 0;
+    color: #333; /* 深灰色文字，易讀 */
+    background-color: #fdfdfd; /* 非常淺的背景色 */
+    font-size: 16px; /* 可根據喜好調整基礎字號 */
+}
+
+/* --- Typography --- */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', 'Noto Sans TC', sans-serif; /* 標題字體 */
+    color: #1a1a1a; /* 更深的標題顏色 */
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    line-height: 1.3;
+}
+
+h1 { font-size: 2.2em; }
+h2 { font-size: 1.8em; }
+h3 { font-size: 1.4em; }
+
+p {
+    margin-bottom: 1.2em;
+}
+
+a {
+    color: #007bff; /* 溫和的藍色連結 */
+    text-decoration: none;
+}
+
+a:hover, a:focus {
+    text-decoration: underline;
+    color: #0056b3;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 2em 0;
+}
+
+/* --- Layout & Container --- */
+.site-container { /* 我們可以在 baseof.html 中加入這個容器 */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex-grow: 1;
+    max-width: 800px; /* 主內容區最大寬度 */
+    margin: 20px auto; /* 頁面居中 */
+    padding: 20px;
+    background-color: #fff; /* 內容區白色背景 */
+    box-shadow: 0 0 10px rgba(0,0,0,0.05); /* 微妙的陰影 */
+}
+
+/* --- Header & Footer --- */
+.site-header {
+    background-color: #fff;
+    padding: 1em 0;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.site-header nav a {
+    font-family: 'Montserrat', 'Noto Sans TC', sans-serif;
+    color: #333;
+    font-weight: 500; /* Noto Sans TC 500 字重不錯 */
+}
+
+.site-header nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.site-header nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+.site-footer {
+    background-color: #333;
+    color: #f4f4f4;
+    padding: 1.5em;
+    text-align: center;
+    font-size: 0.9em;
+}
+.site-footer a {
+    color: #87ceeb; /* 頁腳連結淺藍色 */
+}
+
+
+/* --- Newsletter Specific Styles --- */
+.newsletter-issue header h1 {
+    font-size: 2em; /* 單期電子報主標題 */
+    margin-bottom: 0.2em;
+}
+.newsletter-issue .date {
+    color: #777;
+    font-style: italic;
+    margin-bottom: 2em;
+    display: block; /* 讓日期獨佔一行 */
+}
+
+.newsletter-issue .content h2 { /* Markdown 中的 ## 分類標題 */
+    font-size: 1.6em;
+    margin-top: 2.5em;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.3em;
+    color: #007bff;
+}
+
+.newsletter-issue .content h3 { /* Markdown 中的 ### 新聞標題 */
+    font-size: 1.3em;
+    margin-top: 2em;
+    color: #2a2a2a;
+}
+.newsletter-issue .content h3 a {
+    color: inherit; /* 讓新聞標題連結顏色與標題一致 */
+}
+.newsletter-issue .content h3 a:hover {
+    color: #0056b3;
+}
+
+
+.newsletter-issue .content p {
+    font-size: 1em;
+    color: #444; /* 摘要內文顏色 */
+}
+
+.newsletter-issue .content .meta-info { /* 新聞來源和日期 */
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 0.8em;
+    display: block;
+}
+.newsletter-issue .content .meta-info a {
+    color: #555;
+    font-weight: 500;
+}
+
+
+.newsletter-issue .content .read-more a {
+    display: inline-block;
+    margin-top: 0.5em;
+    font-weight: bold;
+}
+
+/* Homepage specific */
+.home-page h1 {
+    font-size: 2.5em;
+    margin-bottom: 0.5em;
+}
+.home-page .latest-issue-section {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    padding: 25px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+.home-page .latest-issue-section h2 a {
+    text-decoration: none;
+    color: #007bff;
+}
+.home-page .latest-issue-section h2 a:hover {
+    color: #0056b3;
+}
+.home-page .view-archive-link a {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    transition: background-color 0.2s ease;
+}
+.home-page .view-archive-link a:hover {
+    background-color: #0056b3;
+}
+
+
+/* Archive page specific */
+.newsletter-archive h1 {
+    font-size: 2em;
+    margin-bottom: 1em;
+}
+.newsletter-archive ul {
+    list-style-type: none;
+    padding: 0;
+}
+.newsletter-archive li {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+.newsletter-archive li:last-child {
+    border-bottom: none;
+}
+.newsletter-archive li a {
+    font-size: 1.2em;
+    font-weight: 500;
+    color: #007bff;
+}
+.newsletter-archive li a:hover {
+    color: #0056b3;
+}
+.newsletter-archive .date {
+    font-size: 0.9em;
+    color: #777;
+    margin-left: 10px;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    main {
+        margin: 10px;
+        padding: 15px;
+    }
+    h1 { font-size: 1.8em; }
+    h2 { font-size: 1.5em; }
+    h3 { font-size: 1.2em; }
+    .site-header nav ul li { margin: 0 10px; }
+}
+
+@media (max-width: 480px) {
+    body { font-size: 15px; }
+    .site-header nav ul { text-align: center; }
+    .site-header nav ul li { display: block; margin: 10px 0; }
+    .home-page .view-archive-link a { width: 100%; text-align: center; }
+}

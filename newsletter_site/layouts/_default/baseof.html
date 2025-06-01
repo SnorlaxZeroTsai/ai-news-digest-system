@@ -1,27 +1,36 @@
 <!DOCTYPE html>
 <html lang="{{ .Site.LanguageCode | default "en-us" }}">
 <head>
-    <meta charset="UTF-fs8">
+    {{/* ... (head 內容與之前相同，包含 Google Fonts 連結) ... */}}
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
     <meta name="description" content="{{ if .IsHome }}{{ .Site.Params.description }}{{ else }}{{ .Description | default .Summary }}{{ end }}">
-    <link rel="stylesheet" href="/css/style.css"> 
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ "/css/style.css" | relURL }}"> 
 </head>
 <body>
-    <header class="site-header">
-        <nav>
-            <a href="{{ .Site.BaseURL }}">{{ .Site.Title }}</a>
-            <ul>
-                {{ range .Site.Menus.main }}
-                <li><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
-                {{ end }}
-            </ul>
-        </nav>
-    </header>
-    <main>
-        {{ block "main" . }}{{ end }} </main>
-    <footer class="site-footer">
-        <p>&copy; {{ now.Format "2006" }} {{ .Site.Title }}. All rights reserved.</p>
-    </footer>
+    <div class="site-container"> {{/* <-- 新增容器 */}}
+        <header class="site-header">
+            <nav>
+                <a href="{{ .Site.BaseURL | relURL }}">{{ .Site.Title }}</a>
+                <ul>
+                    {{ range .Site.Menus.main }}
+                    <li><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
+                    {{ end }}
+                </ul>
+            </nav>
+        </header>
+        <main>
+            {{ block "main" . }}{{ end }}
+        </main>
+        <footer class="site-footer">
+            <p>&copy; {{ now.Format "2006" }} {{ .Site.Title }}. All rights reserved. Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a>.</p>
+        </footer>
+    </div> {{/* <-- 閉合容器 */}}
 </body>
 </html>
