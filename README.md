@@ -53,7 +53,9 @@ graph TD
     classDef dataNode type:database,fill:#fff,stroke:#333,stroke-width:2px;
     class A,B,D,E,F,G pythonNode;
     class C,H_json_initial dataNode;
+```
 
+```mermaid
 graph TD
     H_json_initial["Initial Processed JSON (No Image URL)"] --> I_subgraph;
     
@@ -67,13 +69,12 @@ graph TD
 
     M_update --> N_json_updated["Updated Processed JSON (with Image URL/Path Info): data/processed/YYYY-MM-DD_final.json"];
 
+    %% Node Styling for Part 2
     classDef dataNode type:database,fill:#fff,stroke:#333,stroke-width:2px;
     classDef userNode fill:#lightgrey,stroke:#333,stroke-width:2px;
     class H_json_initial, N_json_updated dataNode;
     class I_subgraph,J,K,L_url,M_update userNode;
-
 ```
-
 ## Setup and Installation
 
 1.  **Clone the repository**:
