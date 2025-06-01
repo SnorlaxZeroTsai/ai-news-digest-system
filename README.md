@@ -1,7 +1,7 @@
 # AI Popular Science Express
 
 This project is an AI-driven news summarization system with a core focus on science popularization. It automates the daily fetching of content from several high-quality AI-related websites. This content is then initially processed by language models (with future plans for deduplication and classification) and summarized into a popular science style using Large Language Models (currently OpenAI API). Finally, the processed content is organized and published as daily e-newsletter pages using the Hugo static site generator.
-
+![Homepage](https://github.com/SnorlaxZeroTsai/ai-news-image/blob/main/homepage.jpg?raw=true)
 ## Project Goal
 
 * To automatically aggregate the latest information in the AI field from multiple authoritative sources daily.
