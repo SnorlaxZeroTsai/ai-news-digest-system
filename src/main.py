@@ -107,10 +107,8 @@ def run_daily_pipeline():
         
         image_date_folder_name = today_date_obj.strftime('%Y-%m-%d')
         
-        # 預期圖片檔名 (假設 .png，您可以讓用戶手動保存為不同格式，並在 markdown_generator 中檢查多種後綴)
+
         expected_filename = f"{image_date_folder_name}_{slug_base}.png" 
-        
-        # 預期在 Markdown 中使用的圖片路徑
         expected_markdown_path = f"{MANUAL_IMAGE_BASE_PATH_FOR_MARKDOWN}/{image_date_folder_name}/{expected_filename}"
         
         article['image_expected_filename'] = expected_filename
@@ -121,7 +119,7 @@ def run_daily_pipeline():
     # --- 5. Save Final Processed Data (JSON) ---
     save_final_processed_data(articles_with_image_paths, today_string) # summarized_articles is the fully processed list
 
-    # *** 新增步驟：6. Generate and Save Markdown Newsletter ***
+    # *** 6. Generate and Save Markdown Newsletter ***
     print("\n--- Step 6: Generating Markdown Newsletter ---")
     if summarized_articles: # Use the fully processed list
         markdown_content = generate_newsletter_markdown(summarized_articles, today_date_obj)
